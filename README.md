@@ -1,3 +1,3 @@
-# Flink-jobs
+# Flink Java jobs demo
 
-Flink Java Jobs, include Source , Transform and Sink demo.
+Flink Java job demo, include Source , Transform and Sink demo.
