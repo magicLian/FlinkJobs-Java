@@ -24,7 +24,7 @@ public class MapTransformTest {
             @Override
             public DeviceTemperature map(String value) {
                 String[] split = value.split(",");
-                float temperature = Integer.parseInt(split[1]);
+                float temperature = Float.parseFloat(split[1]);
                 return new DeviceTemperature(split[0], temperature, split[2]);
             }
         });
@@ -34,7 +34,7 @@ public class MapTransformTest {
             @Override
             public DeviceTemperature map(String value) {
                 String[] split = value.split(",");
-                int temperature = Integer.parseInt(split[1]);
+                float temperature = Float.parseFloat(split[1]);
                 return new DeviceTemperature(split[0], temperature, split[2]);
             }
 

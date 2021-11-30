@@ -2,6 +2,7 @@ package com.adv.flinkjobs.transform;
 
 import com.adv.models.DeviceTemperature;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -18,11 +19,11 @@ public class FlatMapTransformTest {
         );
 
         //transform 1:n
-        SingleOutputStreamOperator<DeviceTemperature> flatMapStream = inputStream.flatMap(new RichFlatMapFunction<String, DeviceTemperature>() {
+        DataStream<DeviceTemperature> flatMapStream = inputStream.flatMap(new RichFlatMapFunction<String, DeviceTemperature>() {
             @Override
             public void flatMap(String value, Collector<DeviceTemperature> out) {
                 String[] split = value.split(",");
-                float temperature = Integer.parseInt(split[1]);
+                float temperature = Float.parseFloat(split[1]);
                 out.collect(new DeviceTemperature(split[0], temperature, split[2]));
             }
         });
