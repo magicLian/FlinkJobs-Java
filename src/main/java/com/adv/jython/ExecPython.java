@@ -23,7 +23,7 @@ public class ExecPython {
         System.out.println("result1 = "+ret1);
 
         //exec file
-        FileInputStream pyFile = new FileInputStream("/home/lz/workspace/flink-jobs/src/main/resources/py_test.py");
+        FileInputStream pyFile = new FileInputStream("/home/lz/workspace/flink-jobs/src/main/resources/pyTest.py");
         pyInterp.execfile(pyFile);
         PyObject ret2 = pyInterp.get("ret");
         System.out.println("result2 = "+ret2);
