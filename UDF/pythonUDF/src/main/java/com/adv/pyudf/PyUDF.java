@@ -1,54 +1,53 @@
 package com.adv.pyudf;
 
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.configuration.CoreOptions;
+import org.apache.flink.python.PythonOptions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.apache.flink.types.Row;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class PyUDF {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-
         StreamTableEnvironment tEnv = StreamTableEnvironment.create(env);
-        TableResult show_tables = tEnv.executeSql("show tables");
-        show_tables.print();
 
-        TableResult tableResult = tEnv.executeSql("CREATE TABLE device_temperature (\n" +
-                "    device_id      STRING,\n" +
-                "    temperature     FLOAT,\n" +
-                "    timestamps     TIMESTAMP(4),\n" +
-                "    PRIMARY KEY (device_id) NOT ENFORCED" +
-                ") WITH (\n" +
-                "    'connector'  = 'jdbc',\n" +
-                "    'url'        = 'jdbc:postgresql://localhost:5432/ft',\n" +
-                "    'table-name' = 'device_temperature',\n" +
-                "    'driver'     = 'org.postgresql.Driver',\n" +
-                "    'username'   = 'postgres',\n" +
-                "    'password'   = 'postgres'\n" +
-                ")");
-        tableResult.print();
+        //set cfg
+        tEnv.getConfig().getConfiguration().set(CoreOptions.DEFAULT_PARALLELISM, 1);
+        tEnv.getConfig().getConfiguration().set(PythonOptions.USE_MANAGED_MEMORY, true);
+        tEnv.getConfig().getConfiguration().setString("python.files",
+                "file:///home/magic/workspace/python/flinkTestUdf/udfTest.py");
+        tEnv.getConfig().getConfiguration().setString("python.client.executable",
+                "/usr/bin/python3");
+        tEnv.getConfig().getConfiguration().setString("python.executable",
+                "/usr/bin/python3");
 
-        //source
-        DataStreamSource<String> inputStream = env.readTextFile(
-                "/home/magic/workspace/flink-jobs/UDF/pythonUDF/src/main/resources/device_temperature.txt"
+        tEnv.executeSql(
+                "CREATE TEMPORARY SYSTEM FUNCTION add_one AS 'udfTest.add_one' LANGUAGE PYTHON"
         );
-        inputStream.print();
-        env.execute("job");
+        tEnv.createTemporaryView("source", tEnv.fromValues(1, 2, 3).as("a"));
 
-//        tEnv.getConfig().getConfiguration().setString("python.files",
-//                "/home/magic/workspace/python/flinkTestUdf/udfTest.py");
-//        tEnv.getConfig().getConfiguration().setString("python.client.executable", "/usr/bin/python3");
-//        tEnv.getConfig().getConfiguration().setString("python.executable", "/usr/bin/python3");
-//        tEnv.getConfig().getConfiguration().setString("taskmanager.memory.task.off-heap.size", "79mb");
-//        /*pass here the function.py and the name of the function into the python script*/
-//        tEnv.executeSql(
-//                "CREATE TEMPORARY SYSTEM FUNCTION add1 AS 'udfTest.add_one' LANGUAGE PYTHON"
-//        );
-//
-//        TableResult tableResult = tEnv.executeSql("select add1(3)");
-//        System.out.println(tableResult.toString());
+        System.out.println("table source has 3 ");
 
 
+        Iterator<Row> result = tEnv.executeSql("select add_one(a) as a from source").collect();
+
+
+        List<Integer> actual = new ArrayList<>();
+        while (result.hasNext()) {
+            Row r = result.next();
+            System.out.println(""+r.toString());
+            actual.add((Integer) r.getField(0));
+        }
+
+        List<Integer> expected = Arrays.asList(2, 3, 4);
+        if (!actual.equals(expected)) {
+            throw new AssertionError(String.format("The output result: %s is not as expected: %s!", actual, expected));
+        }
     }
 }
