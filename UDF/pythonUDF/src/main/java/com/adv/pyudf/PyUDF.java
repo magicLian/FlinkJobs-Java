@@ -34,9 +34,7 @@ public class PyUDF {
 
         System.out.println("table source has 3 ");
 
-
         Iterator<Row> result = tEnv.executeSql("select add_one(a) as a from source").collect();
-
 
         List<Integer> actual = new ArrayList<>();
         while (result.hasNext()) {
