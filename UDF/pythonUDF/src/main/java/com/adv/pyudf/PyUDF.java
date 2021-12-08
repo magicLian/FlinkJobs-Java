@@ -21,7 +21,7 @@ public class PyUDF {
         tEnv.getConfig().getConfiguration().set(CoreOptions.DEFAULT_PARALLELISM, 1);
         tEnv.getConfig().getConfiguration().set(PythonOptions.USE_MANAGED_MEMORY, true);
         tEnv.getConfig().getConfiguration().setString("python.files",
-                "file:///home/magic/workspace/python/flinkTestUdf/udfTest.py");
+                "file:///home/magic/workspace/flink-jobs/UDF/pythonUDF/src/main/resources/udfTest.py");
         tEnv.getConfig().getConfiguration().setString("python.client.executable",
                 "/usr/bin/python3");
         tEnv.getConfig().getConfiguration().setString("python.executable",
