@@ -17,6 +17,12 @@ public class JavaUDF {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         StreamTableEnvironment tEnv = StreamTableEnvironment.create(env);
 
+
+        //Here is the upcoming new features.
+        //https://cwiki.apache.org/confluence/display/FLINK/FLIP-79+Flink+Function+DDL+Support
+        //https://cwiki.apache.org/confluence/display/FLINK/FLIP-178+Support+Advanced+Function+DDL
+        //It provides us an official way to adding remote files/jars.
+
         String path = "https://api-apprepo-sundi-ensaas.axa.wise-paas.com.cn/v1.0/filerepo/others/win_exe_app/files/jarlib-1.0.0.jar";
         loadJar(new URL(path));
 
