@@ -1,8 +1,4 @@
 target/*
 .idea/*
-/UDF/pythonUDF/*.iml
-/UDF/pythonUDF/target/*
-/UDF/Jarlib/*.iml
-/UDF/Jarlib/target/*
-/UDF/JavaUDF/*.iml
-/UDF/JavaUDF/target/*
+/**/*.iml
+/**/target/*
